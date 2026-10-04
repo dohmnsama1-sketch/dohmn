@@ -38,7 +38,8 @@ Show a maintenance request interpreted by the actual model, a repair cart, a blo
 | Local acceptance | **62 tests passed; browser walkthrough passed** | [Verification](VERIFICATION.md) |
 | Actual sandbox execution | **Pending** | Order, payer approval and verified capture |
 | Public GitHub | **Published** | [Complete source and license](https://github.com/dohmnsama1-sketch/dohmn); [CI passed on 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389) |
-| Public YouTube | **Pending publication** | Local engineering preview rendered, ~2:15; final sandbox recording still needed |
+| Public YouTube preview | **Published** | [Engineering preview, ~2:15](https://youtu.be/kqcYwCBVv50); actual sandbox execution is explicitly pending |
+| Final integration video | **Pending** | Record actual sandbox order, buyer approval and capture; public YouTube video under three minutes |
 | Registration | **Pending** | Provider confirmation and accurate entrant facts |
 | Final submission | **Pending** | Submitted entry receipt |
 | Award / payable / settlement | **Not established** | Official verification and later settlement |
