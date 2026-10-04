@@ -1,6 +1,6 @@
 # MendCart submission draft
 
-Use this copy only with the final verified implementation. Registration, public repository, public video, provider validation and final entry remain separate pending stages.
+Use this copy only with the final verified implementation. The complete public repository and public engineering preview exist. Registration, actual sandbox execution, the final integration video and final entry remain pending.
 
 ## Name and tagline
 
@@ -54,7 +54,7 @@ Form read on 4 October 2026. Fetch current requirements again before writing.
 | 28783 | Prior changes | `N/A` if new |
 | 28784 | PayPal + AI use | Verified technology description |
 | 28786 | Sponsors | Only actually used tools; current local stack: `None, used other AI tools.` |
-| 28788 | GitHub | **Pending verified public URL** |
+| 28788 | GitHub | https://github.com/dohmnsama1-sketch/dohmn — complete public source and Apache-2.0 license |
 | 28787 | Demo URL | Optional tested hosted URL |
 | 28798 | Testing | README plus sandbox guide; no secrets |
 | 28790 | PayPal rating | Accurate 1–10 assessment after integration |
@@ -64,7 +64,7 @@ Form read on 4 October 2026. Fetch current requirements again before writing.
 | 28795 | Jurisdiction | Accurate eligible jurisdiction attestation |
 | 28796 | Employment | Accurate sponsor/administrator affiliation attestation |
 
-The global project form also requires the write-up and **public YouTube URL**, which is pending. Optional sponsor feedback should be answered only for used tools.
+The global project form also requires the write-up and **public YouTube URL**. The current [engineering preview](https://youtu.be/kqcYwCBVv50) is public and under three minutes, but does not demonstrate an executed sandbox integration. Replace it with the final integration recording before claiming that the complete sandbox flow is demonstrated. Optional sponsor feedback should be answered only for used tools.
 
 ## Registration facts
 
