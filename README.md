@@ -71,7 +71,7 @@ The suite uses local fixtures and mocked provider transport. It verifies program
 - [Submission draft and form fields](docs/SUBMISSION.md)
 - [Demo recording script](docs/DEMO_SCRIPT.md)
 
-The complete source is public at [dohmnsama1-sketch/dohmn](https://github.com/dohmnsama1-sketch/dohmn), under Apache-2.0. [GitHub CI passed on Python 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389). An actual sandbox demonstration and final public YouTube video shorter than three minutes remain pending. The local engineering preview lasts approximately 2:15 and explicitly discloses that provider execution has not happened. Pending stages are tracked in the competition document.
+The complete source is public at [dohmnsama1-sketch/dohmn](https://github.com/dohmnsama1-sketch/dohmn), under Apache-2.0. [GitHub CI passed on Python 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389). Watch the [public engineering preview on YouTube](https://youtu.be/kqcYwCBVv50), approximately 2:15, showing actual application screens with disclosed synthetic narration. It explicitly states that provider execution has not happened. Actual sandbox execution and a final video demonstrating the completed integration remain pending. Pending stages are tracked in the competition document.
 
 ## License
 
