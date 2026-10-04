@@ -21,7 +21,7 @@ Open **http://127.0.0.1:8000**. Opening `web/index.html` directly as a file does
 
 Try `Our workshop's water pump is leaking. Try a repair before replacing it.` with a $120 budget. Repeat with a $10 budget to see checkout blocked. Battery and repair tools requests explore other supported catalog examples.
 
-Review the plan, check the approval box and continue. Without PayPal credentials, the app returns a clearly labeled **preview** and creates no PayPal order. Actual creation and capture require a sandbox developer app and sandbox buyer approval.
+Without PayPal credentials, select **View local checkout preview** to inspect the unsubmitted payload. This read-only route records no approval and creates no PayPal order. With sandbox credentials, review the plan, check the approval box and continue to the separate sandbox payer approval step.
 
 ## What AI does
 
@@ -71,7 +71,7 @@ The suite uses local fixtures and mocked provider transport. It verifies program
 - [Submission draft and form fields](docs/SUBMISSION.md)
 - [Demo recording script](docs/DEMO_SCRIPT.md)
 
-A **public GitHub repository**, a **public YouTube video shorter than three minutes**, and an actual sandbox demonstration remain final entry requirements. Pending stages are tracked in the competition document.
+The complete source is public at [dohmnsama1-sketch/dohmn](https://github.com/dohmnsama1-sketch/dohmn), under Apache-2.0. [GitHub CI passed on Python 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389). An actual sandbox demonstration and final public YouTube video shorter than three minutes remain pending. The local engineering preview lasts approximately 2:15 and explicitly discloses that provider execution has not happened. Pending stages are tracked in the competition document.
 
 ## License
 
