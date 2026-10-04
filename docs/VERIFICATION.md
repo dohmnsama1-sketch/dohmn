@@ -14,4 +14,8 @@ The working browser application was exercised for:
 
 The 16 held-out synthetic intent phrases passed 16/16. This is a small regression set, not a production accuracy or customer benchmark.
 
-Outstanding submission evidence: actual PayPal sandbox execution; public GitHub repository; final public video showing the completed integration; factual registration/eligibility answers; provider-confirmed submission. No cash award or payable entitlement exists yet.
+The [public source repository](https://github.com/dohmnsama1-sketch/dohmn) contains all source, the corpus, tests, setup documentation and Apache-2.0 license. [CI completed successfully on Python 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389).
+
+The local 2:15 engineering preview passed a complete media decode check. It uses actual captured application screens and an offline synthetic voice. It explicitly discloses pending sandbox execution.
+
+Outstanding submission evidence: actual PayPal sandbox execution; final public video showing the completed integration; factual registration/eligibility answers; provider-confirmed submission. No cash award or payable entitlement exists yet.
