@@ -33,12 +33,12 @@ Show a maintenance request interpreted by the actual model, a repair cart, a blo
 | Stage | Status at document preparation | Evidence needed |
 |---|---|---|
 | Source project | Local project exists | Source and creation history |
-| Genuine AI | Local ML implementation being prepared | Actual inference, corpus disclosure and evaluation |
-| PayPal code | Sandbox integration being completed | Final code and provider walkthrough |
-| Local acceptance | Pending final combined checks | Current tests and browser walkthrough |
+| Genuine AI | **Verified locally** | Runtime inference; 72 synthetic training examples; 16 held-out synthetic cases |
+| PayPal code | **Implemented and mock-tested** | Orders v2 adapter and 22 checkout tests; actual provider walkthrough pending |
+| Local acceptance | **62 tests passed; browser walkthrough passed** | [Verification](VERIFICATION.md) |
 | Actual sandbox execution | **Pending** | Order, payer approval and verified capture |
-| Public GitHub | **Pending** | Public URL, complete source and visible license |
-| Public YouTube | **Pending** | Public URL, functioning demo and duration <3 minutes |
+| Public GitHub | **Published** | [Complete source and license](https://github.com/dohmnsama1-sketch/dohmn); [CI passed on 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389) |
+| Public YouTube | **Pending publication** | Local engineering preview rendered, ~2:15; final sandbox recording still needed |
 | Registration | **Pending** | Provider confirmation and accurate entrant facts |
 | Final submission | **Pending** | Submitted entry receipt |
 | Award / payable / settlement | **Not established** | Official verification and later settlement |
