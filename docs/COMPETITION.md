@@ -1,6 +1,6 @@
 # PayPal AI Hackathon 2026
 
-Rules checked on **4 October 2026**. Recheck official rules before submitting because they may change.
+Rules checked on **5 October 2026**. Recheck official rules before submitting because they may change.
 
 Sources: [overview and requirements](https://paypalaihackathon.devpost.com/) · [official rules](https://paypalaihackathon.devpost.com/rules) · [PayPal Developer Platform](https://developer.paypal.com/).
 
@@ -9,6 +9,8 @@ Sources: [overview and requirements](https://paypalaihackathon.devpost.com/) · 
 The event is online and generally open worldwide, subject to jurisdiction, age and conflict restrictions. Saudi Arabia is absent from named exclusions. Individual eligibility still depends on accurate residence, age and affiliation facts.
 
 Entries need meaningful PayPal sandbox and AI use, a functioning project, complete source and setup instructions in a public open-source GitHub repository, and a public YouTube demo shorter than three minutes. English materials or translations are required. A hosted demo is optional when judges can run the app from complete repository instructions.
+
+Devpost displays scheduled maintenance starting **7 October 2026, 06:00 UTC / 09:00 Riyadh**. No end time or deadline extension was announced in the checked notice. An unavailable page during that window does not establish a changed deadline or registration status.
 
 ## Dates and prize limits
 
@@ -33,12 +35,12 @@ Show a maintenance request interpreted by the actual model, a repair cart, a blo
 | Stage | Status at document preparation | Evidence needed |
 |---|---|---|
 | Source project | Local project exists | Source and creation history |
-| Genuine AI | **Verified locally** | Runtime inference; 72 synthetic training examples; 16 held-out synthetic cases |
+| Genuine AI | **Verified locally** | Runtime inference; 72 synthetic training examples; [reproducible report](EVALUATION.md) on 16 project-authored synthetic regression cases, not an independent benchmark |
 | PayPal code | **Implemented and mock-tested** | Orders v2 adapter and 22 checkout tests; actual provider walkthrough pending |
 | Local acceptance | **62 tests passed; browser walkthrough passed** | [Verification](VERIFICATION.md) |
 | Actual sandbox execution | **Pending** | Order, payer approval and verified capture |
 | Public GitHub | **Published** | [Complete source and license](https://github.com/dohmnsama1-sketch/dohmn); [CI passed on 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389) |
-| Public YouTube preview | **Published** | [Engineering preview, ~2:15](https://youtu.be/kqcYwCBVv50); actual sandbox execution is explicitly pending |
+| Public YouTube preview | **Published** | [Engineering preview, ~2:15](https://youtu.be/kqcYwCBVv50), with published English captions; actual sandbox execution is explicitly pending |
 | Final integration video | **Pending** | Record actual sandbox order, buyer approval and capture; public YouTube video under three minutes |
 | Registration | **Pending** | Provider confirmation and accurate entrant facts |
 | Final submission | **Pending** | Submitted entry receipt |

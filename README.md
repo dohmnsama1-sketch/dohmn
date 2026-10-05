@@ -61,9 +61,12 @@ AI-assisted development was used. The original training examples and source are 
 
 ```sh
 python3 -m unittest discover -s tests -v
+python3 tools/evaluate_intents.py
 ```
 
 The suite uses local fixtures and mocked provider transport. It verifies program behavior; it does not contact PayPal or establish provider acceptance. Follow the sandbox guide for a separate provider walkthrough.
+
+The [reproducible intent evaluation](docs/EVALUATION.md) exports the existing 16 synthetic regression phrases with per-case predictions, nearest-example traces, a confusion matrix and source hashes. Its observed 16/16 result applies to this project-authored set only. The evaluation runs offline and checks for normalized phrase overlap with training data; it does not establish independent or real-user accuracy.
 
 ## Submission materials
 

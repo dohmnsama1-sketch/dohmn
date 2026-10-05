@@ -41,9 +41,12 @@ Plan metadata reports `planner.engine: local-tfidf-knn-v1` in local mode and `ex
 Run from the repository root:
 
 ```sh
-python3 -m unittest tests/test_planner.py -v
+python3 -m unittest discover -s tests -p test_planner.py -v
+python3 tools/evaluate_intents.py
 ```
 
-The held-out classification test covers 16 exact phrases absent from the training corpus, with four each for pump, battery, tools, and unsupported requests. The observed result is **16/16 on this small synthetic test set**. The tests also exercise alternatives, quantities and surplus disclosure, excluded conditions, negated goals, multiple categories, supplier fallbacks, written versus structured budgets, partial-cart rejection, out-of-bounds numbers, synthetic compatibility evidence, inventory fallbacks, and invalid external-model proposals. This is regression evidence for the bounded demo, not a benchmark against competing systems or a claim about real-user accuracy.
+The classification regression test covers 16 project-authored synthetic phrases absent from the training corpus, with four each for pump, battery, tools, and unsupported requests. The observed result is **16/16 on this small synthetic test set**. These phrases have been used during development; they do not form an independent or blinded benchmark. The [evaluation guide](EVALUATION.md) and [saved report](evaluation/intent-report.json) include every prediction, acceptance decision, nearest training examples, confusion matrix, source hashes and normalized overlap checks. All 12 supported phrases were accepted and all 4 unsupported phrases rejected in this run. Similarity and margin are retrieval scores, not calibrated probabilities.
+
+Separate tests exercise alternatives, quantities and surplus disclosure, excluded conditions, negated goals, multiple categories, supplier fallbacks, written versus structured budgets, partial-cart rejection, out-of-bounds numbers, synthetic compatibility evidence, inventory fallbacks, and invalid external-model proposals. This is regression evidence for the bounded demo, not a comparison against competing systems or a claim about real-user accuracy.
 
 The training corpus is original synthetic work under Apache-2.0. [`data/README.md`](../data/README.md) documents its provenance and limits. No real users, revenue, provider transactions, or live integrations are fabricated as evaluation evidence.

@@ -42,7 +42,7 @@ Without actual capture evidence, keep this stage pending rather than claiming de
 
 ## Required form mapping
 
-Form read on 4 October 2026. Fetch current requirements again before writing.
+Form read on 5 October 2026. Fetch current requirements again before writing.
 
 | ID | Field | Prepared answer or required fact |
 |---|---|---|
@@ -56,7 +56,7 @@ Form read on 4 October 2026. Fetch current requirements again before writing.
 | 28786 | Sponsors | Only actually used tools; current local stack: `None, used other AI tools.` |
 | 28788 | GitHub | https://github.com/dohmnsama1-sketch/dohmn — complete public source and Apache-2.0 license |
 | 28787 | Demo URL | Optional tested hosted URL |
-| 28798 | Testing | README plus sandbox guide; no secrets |
+| 28798 | Testing | README, reproducible synthetic intent report and sandbox guide; no secrets; actual provider execution remains pending |
 | 28790 | PayPal rating | Accurate 1–10 assessment after integration |
 | 28791 | Feedback | Observations from actual development/testing |
 | 28792 | Contact preference | Actual Yes / No |

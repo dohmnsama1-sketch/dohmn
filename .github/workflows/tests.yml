@@ -14,3 +14,5 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover -s tests -v
+      - name: Export offline synthetic intent evaluation
+        run: python tools/evaluate_intents.py --output "$RUNNER_TEMP/intent-report.json"

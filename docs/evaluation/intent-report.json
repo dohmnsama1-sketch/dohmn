@@ -1,0 +1,553 @@
+{
+  "schema_version": 1,
+  "experiment": "existing-16-phrase-synthetic-intent-regression",
+  "engine": "local-tfidf-knn-v1",
+  "scope": "Single-clause intent classification only; not cart-policy, compatibility, commerce, or real-user evaluation.",
+  "execution": {
+    "python": "3.12.14",
+    "network_disabled": true,
+    "external_model_used": false,
+    "paypal_called": false,
+    "dotenv_loaded": false
+  },
+  "sources": {
+    "training": {
+      "path": "data/intent_corpus.json",
+      "sha256": "ee1aa3a5841ea2df64391e2de7d63fd3c2cea81be8afcde7978cd0298de7b5a9",
+      "examples": 72,
+      "label_counts": {
+        "battery": 18,
+        "pump": 18,
+        "tools": 18,
+        "unsupported": 18
+      },
+      "provenance": "Original synthetic training phrases authored for MendCart; no customer data, scraped text, or claim of real user research.",
+      "license": "Apache-2.0"
+    },
+    "evaluation": {
+      "path": "tests/test_planner.py:LearnedIntentTests.CASES",
+      "source_file_sha256": "370ca269e766c1b0d549ab17620094f774ef15399e3db678ad1a2d5f4df6a8ee",
+      "case_list_sha256": "c46c0b19c335bfdaeeea77570f3d753a90be5d777b4441bf0d608b78e3136c20",
+      "examples": 16,
+      "provenance": "Existing original synthetic regression phrases authored for this project; not independent real-user data."
+    },
+    "classifier": {
+      "path": "mendcart/planner.py",
+      "sha256": "860b1ff62c0456c468f28dfef9afe0877dfd1d782ba6e217b70e2577f6539aee"
+    }
+  },
+  "split_checks": {
+    "exact_or_normalized_phrase_overlap": 0,
+    "duplicate_evaluation_phrases": 0,
+    "normalization": "Unicode casefold, word tokens, whitespace/punctuation normalization",
+    "semantic_independence_established": false,
+    "note": "Distinct strings do not establish a blind or independently authored test set."
+  },
+  "metrics": {
+    "correct": 16,
+    "total": 16,
+    "accuracy_on_this_set": 1.0,
+    "supported_requests": 12,
+    "supported_requests_accepted": 12,
+    "unsupported_requests": 4,
+    "unsupported_requests_rejected": 4,
+    "unsupported_false_accepts": 0,
+    "confusion_matrix_rows_expected_columns_predicted": {
+      "pump": {
+        "pump": 4,
+        "battery": 0,
+        "tools": 0,
+        "unsupported": 0
+      },
+      "battery": {
+        "pump": 0,
+        "battery": 4,
+        "tools": 0,
+        "unsupported": 0
+      },
+      "tools": {
+        "pump": 0,
+        "battery": 0,
+        "tools": 4,
+        "unsupported": 0
+      },
+      "unsupported": {
+        "pump": 0,
+        "battery": 0,
+        "tools": 0,
+        "unsupported": 4
+      }
+    },
+    "per_class": {
+      "pump": {
+        "expected_count": 4,
+        "predicted_count": 4,
+        "correct_count": 4,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "battery": {
+        "expected_count": 4,
+        "predicted_count": 4,
+        "correct_count": 4,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "tools": {
+        "expected_count": 4,
+        "predicted_count": 4,
+        "correct_count": 4,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "unsupported": {
+        "expected_count": 4,
+        "predicted_count": 4,
+        "correct_count": 4,
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    }
+  },
+  "limitations": [
+    "Small, project-authored synthetic set; regression evidence only.",
+    "No independent, blinded, multilingual, adversarial, or real-user performance estimate.",
+    "Training/evaluation phrases can share vocabulary and semantic templates despite no exact overlap.",
+    "Similarity and margin are retrieval scores, not calibrated probabilities.",
+    "A correct intent does not establish safe battery use, real pump compatibility, a valid cart, or provider payment success."
+  ],
+  "cases": [
+    {
+      "case_id": "existing-holdout-01",
+      "text": "The circulation pump dribbles at the gasket",
+      "expected": "pump",
+      "predicted": "pump",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.3069,
+      "margin": 0.3069,
+      "nearest_training_examples": [
+        {
+          "intent": "pump",
+          "text": "Our water circulation pump has a slow leak.",
+          "similarity": 0.4629
+        },
+        {
+          "intent": "pump",
+          "text": "The circulation unit is dripping from the pump shaft.",
+          "similarity": 0.2377
+        },
+        {
+          "intent": "pump",
+          "text": "Source a gasket kit to stop a pump leak.",
+          "similarity": 0.2202
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-02",
+      "text": "Our pump shaft is dripping; which seal should we get",
+      "expected": "pump",
+      "predicted": "pump",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.3362,
+      "margin": 0.2941,
+      "nearest_training_examples": [
+        {
+          "intent": "pump",
+          "text": "The circulation unit is dripping from the pump shaft.",
+          "similarity": 0.5019
+        },
+        {
+          "intent": "pump",
+          "text": "The water pump is leaking around its shaft seal.",
+          "similarity": 0.2648
+        },
+        {
+          "intent": "pump",
+          "text": "Fix a dripping water pump with a compatible seal kit.",
+          "similarity": 0.242
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-03",
+      "text": "Restore two leaking water pumps at our repair bench",
+      "expected": "pump",
+      "predicted": "pump",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.3386,
+      "margin": 0.1581,
+      "nearest_training_examples": [
+        {
+          "intent": "pump",
+          "text": "Order seal repair kits for two leaking water pumps.",
+          "similarity": 0.5709
+        },
+        {
+          "intent": "tools",
+          "text": "Need screwdrivers and pliers for a repair bench.",
+          "similarity": 0.2641
+        },
+        {
+          "intent": "pump",
+          "text": "Three demo water pumps need seal repairs.",
+          "similarity": 0.2346
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-04",
+      "text": "The water pump assembly has failed beyond repair",
+      "expected": "pump",
+      "predicted": "pump",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.4205,
+      "margin": 0.3628,
+      "nearest_training_examples": [
+        {
+          "intent": "pump",
+          "text": "Replace the failed water pump assembly.",
+          "similarity": 0.7434
+        },
+        {
+          "intent": "pump",
+          "text": "My appliance water pump is losing water.",
+          "similarity": 0.2892
+        },
+        {
+          "intent": "pump",
+          "text": "Find an O-ring seal for the water pump.",
+          "similarity": 0.229
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-05",
+      "text": "Eight protected 18650 cells for a rechargeable lantern",
+      "expected": "battery",
+      "predicted": "battery",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.3286,
+      "margin": 0.3286,
+      "nearest_training_examples": [
+        {
+          "intent": "battery",
+          "text": "We need four protected 18650 battery cells.",
+          "similarity": 0.4702
+        },
+        {
+          "intent": "battery",
+          "text": "I need twelve 18650 cells to rebuild battery packs.",
+          "similarity": 0.2681
+        },
+        {
+          "intent": "battery",
+          "text": "Two packs of new 18650 cells for a repair job.",
+          "similarity": 0.2474
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-06",
+      "text": "Six battery cells to rebuild the exhausted pack",
+      "expected": "battery",
+      "predicted": "battery",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.2983,
+      "margin": 0.2983,
+      "nearest_training_examples": [
+        {
+          "intent": "battery",
+          "text": "I need twelve 18650 cells to rebuild battery packs.",
+          "similarity": 0.3693
+        },
+        {
+          "intent": "battery",
+          "text": "Rebuild the rechargeable pack using four cells.",
+          "similarity": 0.2778
+        },
+        {
+          "intent": "battery",
+          "text": "The workshop needs replacement battery cells.",
+          "similarity": 0.248
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-07",
+      "text": "Supply three packs of tested reclaimed batteries",
+      "expected": "battery",
+      "predicted": "battery",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.2682,
+      "margin": 0.2242,
+      "nearest_training_examples": [
+        {
+          "intent": "battery",
+          "text": "Source eight tested reclaimed cells for a battery pack.",
+          "similarity": 0.3972
+        },
+        {
+          "intent": "battery",
+          "text": "Prefer reclaimed capacity-tested lithium battery cells.",
+          "similarity": 0.2127
+        },
+        {
+          "intent": "battery",
+          "text": "Compare reclaimed and new cell packs for this battery.",
+          "similarity": 0.1948
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-08",
+      "text": "Twelve lithium cells for the workshop portable light",
+      "expected": "battery",
+      "predicted": "battery",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.2899,
+      "margin": 0.245,
+      "nearest_training_examples": [
+        {
+          "intent": "battery",
+          "text": "Order a battery four-pack for the portable light.",
+          "similarity": 0.3585
+        },
+        {
+          "intent": "battery",
+          "text": "Supply twenty lithium cells for five battery packs.",
+          "similarity": 0.2569
+        },
+        {
+          "intent": "battery",
+          "text": "Choose new lithium cells instead of used batteries.",
+          "similarity": 0.2544
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-09",
+      "text": "A set of screwdrivers and pliers for our repair station",
+      "expected": "tools",
+      "predicted": "tools",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.4192,
+      "margin": 0.373,
+      "nearest_training_examples": [
+        {
+          "intent": "tools",
+          "text": "Need screwdrivers and pliers for a repair bench.",
+          "similarity": 0.7303
+        },
+        {
+          "intent": "tools",
+          "text": "Buy maintenance tools for the appliance repair station.",
+          "similarity": 0.2756
+        },
+        {
+          "intent": "tools",
+          "text": "The repair station lacks its screwdriver toolkit.",
+          "similarity": 0.2518
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-10",
+      "text": "Our technicians require two insulated tool sets",
+      "expected": "tools",
+      "predicted": "tools",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.4768,
+      "margin": 0.4199,
+      "nearest_training_examples": [
+        {
+          "intent": "tools",
+          "text": "Two insulated tool sets for our repair team.",
+          "similarity": 0.7245
+        },
+        {
+          "intent": "tools",
+          "text": "Three repair tool sets are needed for technicians.",
+          "similarity": 0.4271
+        },
+        {
+          "intent": "tools",
+          "text": "Find the insulated tool assortment for our maintenance crew.",
+          "similarity": 0.2788
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-11",
+      "text": "Choose an appliance servicing toolkit for the workbench",
+      "expected": "tools",
+      "predicted": "tools",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.3294,
+      "margin": 0.2739,
+      "nearest_training_examples": [
+        {
+          "intent": "tools",
+          "text": "I need tools for routine appliance servicing.",
+          "similarity": 0.4814
+        },
+        {
+          "intent": "tools",
+          "text": "Stock the workbench with a repair toolkit.",
+          "similarity": 0.3594
+        },
+        {
+          "intent": "tools",
+          "text": "The repair station lacks its screwdriver toolkit.",
+          "similarity": 0.1473
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-12",
+      "text": "Find maintenance tools for the household appliance bench",
+      "expected": "tools",
+      "predicted": "tools",
+      "correct": true,
+      "accepted": true,
+      "similarity": 0.3825,
+      "margin": 0.3274,
+      "nearest_training_examples": [
+        {
+          "intent": "tools",
+          "text": "Buy maintenance tools for the appliance repair station.",
+          "similarity": 0.478
+        },
+        {
+          "intent": "tools",
+          "text": "Source repair tools for the maintenance bench.",
+          "similarity": 0.4073
+        },
+        {
+          "intent": "tools",
+          "text": "Order tools to service household appliances.",
+          "similarity": 0.2622
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-13",
+      "text": "Purchase a quantum telescope with a camera",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "accepted": false,
+      "similarity": 0.233,
+      "margin": 0.233,
+      "nearest_training_examples": [
+        {
+          "intent": "unsupported",
+          "text": "Buy a quantum telescope to observe distant galaxies.",
+          "similarity": 0.5
+        },
+        {
+          "intent": "unsupported",
+          "text": "Find a camera and microphone for filming.",
+          "similarity": 0.199
+        },
+        {
+          "intent": "pump",
+          "text": "The water pump is leaking around its shaft seal.",
+          "similarity": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-14",
+      "text": "We want groceries and office chairs",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "accepted": false,
+      "similarity": 0.3703,
+      "margin": 0.3233,
+      "nearest_training_examples": [
+        {
+          "intent": "unsupported",
+          "text": "Purchase notebooks and office chairs.",
+          "similarity": 0.7373
+        },
+        {
+          "intent": "unsupported",
+          "text": "Order dinner and fresh groceries.",
+          "similarity": 0.207
+        },
+        {
+          "intent": "unsupported",
+          "text": "We want coffee beans for the office.",
+          "similarity": 0.1667
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-15",
+      "text": "Order a gaming laptop for video editing",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "accepted": false,
+      "similarity": 0.2968,
+      "margin": 0.2673,
+      "nearest_training_examples": [
+        {
+          "intent": "unsupported",
+          "text": "Order a gaming laptop with a graphics card.",
+          "similarity": 0.7287
+        },
+        {
+          "intent": "unsupported",
+          "text": "Order dinner and fresh groceries.",
+          "similarity": 0.0888
+        },
+        {
+          "intent": "tools",
+          "text": "Order tools to service household appliances.",
+          "similarity": 0.0885
+        }
+      ]
+    },
+    {
+      "case_id": "existing-holdout-16",
+      "text": "Supply a drone and television for the team",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "accepted": false,
+      "similarity": 0.3387,
+      "margin": 0.2636,
+      "nearest_training_examples": [
+        {
+          "intent": "unsupported",
+          "text": "Buy a drone and a satellite dish.",
+          "similarity": 0.4061
+        },
+        {
+          "intent": "unsupported",
+          "text": "I want a bicycle helmet and a television.",
+          "similarity": 0.4061
+        },
+        {
+          "intent": "unsupported",
+          "text": "Source shoes and jackets for the team.",
+          "similarity": 0.2039
+        }
+      ]
+    }
+  ]
+}
