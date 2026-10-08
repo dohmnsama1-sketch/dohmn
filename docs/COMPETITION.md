@@ -2,6 +2,8 @@
 
 Rules checked on **5 October 2026**. Recheck official rules before submitting because they may change.
 
+The **7 October 2026** recheck could not retrieve the overview or rules (HTTP 503); the connected registration/date endpoints were also unavailable. The dates and requirements below retain their last successful verification date of 5 October. An outage does not confirm a deadline change, extension or registration result.
+
 Sources: [overview and requirements](https://paypalaihackathon.devpost.com/) · [official rules](https://paypalaihackathon.devpost.com/rules) · [PayPal Developer Platform](https://developer.paypal.com/).
 
 ## Requirements
@@ -36,10 +38,10 @@ Show a maintenance request interpreted by the actual model, a repair cart, a blo
 |---|---|---|
 | Source project | Local project exists | Source and creation history |
 | Genuine AI | **Verified locally** | Runtime inference; 72 synthetic training examples; [reproducible report](EVALUATION.md) on 16 project-authored synthetic regression cases, not an independent benchmark |
-| PayPal code | **Implemented and mock-tested** | Orders v2 adapter and 22 checkout tests; actual provider walkthrough pending |
-| Local acceptance | **62 tests passed; browser walkthrough passed** | [Verification](VERIFICATION.md) |
+| PayPal code | **Implemented and mock-tested** | Orders v2 adapter and 26 checkout/contract tests, including GET-only pending-capture refresh; actual provider walkthrough pending |
+| Local acceptance | **66 local tests passed; original browser walkthrough passed** | [Verification with dated evidence](VERIFICATION.md) |
 | Actual sandbox execution | **Pending** | Order, payer approval and verified capture |
-| Public GitHub | **Published** | [Complete source and license](https://github.com/dohmnsama1-sketch/dohmn); [CI passed on 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389) |
+| Public GitHub | **Published** | [Complete source and license](https://github.com/dohmnsama1-sketch/dohmn); [CI runs on 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/workflows/tests.yml); match run and source revision |
 | Public YouTube preview | **Published** | [Engineering preview, ~2:15](https://youtu.be/kqcYwCBVv50), with published English captions; actual sandbox execution is explicitly pending |
 | Final integration video | **Pending** | Record actual sandbox order, buyer approval and capture; public YouTube video under three minutes |
 | Registration | **Pending** | Provider confirmation and accurate entrant facts |

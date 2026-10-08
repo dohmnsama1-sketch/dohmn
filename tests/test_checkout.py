@@ -153,6 +153,108 @@ class CheckoutHttpTests(unittest.TestCase):
         capture.assert_called_once()
         self.assertNotIn("private-sandbox", json.dumps(first))
 
+    def test_pending_capture_refreshes_until_completed_without_recapturing(self):
+        plan = self.plan()
+        self.bind(plan)
+        pending = self.provider_order(plan, "COMPLETED")
+        pending["purchase_units"][0]["payments"]["captures"][0]["status"] = "PENDING"
+        completed = self.provider_order(plan, "COMPLETED")
+        completed["payer"] = {"email_address": "private-refresh-payer@example.test"}
+        with patch.object(app, "get_order", side_effect=[self.provider_order(plan, "APPROVED"), pending, completed]) as get, patch.object(app, "capture_order", return_value=pending) as capture:
+            code, first = self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})
+            self.assertEqual(code, 200)
+            self.assertEqual(first["status"], "COMPLETED")
+            self.assertEqual(first["captures"][0]["status"], "PENDING")
+            other = build_opener(HTTPCookieProcessor(CookieJar()))
+            self.assertEqual(self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"}, browser=other)[0], 403)
+            self.assertEqual(get.call_count, 1)
+            pending_code, still_pending = self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})
+            complete_code, refreshed = self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})
+            repeat_code, repeated = self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})
+        self.assertEqual((pending_code, complete_code, repeat_code), (200, 200, 200))
+        self.assertEqual(still_pending["captures"][0]["status"], "PENDING")
+        self.assertEqual(refreshed["captures"][0]["status"], "COMPLETED")
+        self.assertEqual(refreshed["captures"], repeated["captures"])
+        capture.assert_called_once()
+        self.assertEqual(get.call_count, 3)
+        refresh_events = [event for event in refreshed["events"] if event["action"] == "sandbox_capture_refreshed"]
+        self.assertEqual([event["captures"][0]["status"] for event in refresh_events], ["PENDING", "COMPLETED"])
+        self.assertNotIn("private-refresh", json.dumps(refreshed))
+
+    def test_failed_pending_refresh_preserves_cache_then_can_retry(self):
+        plan = self.plan()
+        self.bind(plan)
+        pending = self.provider_order(plan, "COMPLETED")
+        pending["purchase_units"][0]["payments"]["captures"][0]["status"] = "PENDING"
+        record = app.STORE.plans[plan["plan_id"]]
+        with patch.object(app, "get_order", side_effect=[self.provider_order(plan, "APPROVED"), paypal.PayPalError("Sandbox temporarily unavailable."), self.provider_order(plan, "COMPLETED")]) as get, patch.object(app, "capture_order", return_value=pending) as capture:
+            self.assertEqual(self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})[0], 200)
+            old_capture, old_events = copy.deepcopy(record.capture), copy.deepcopy(record.events)
+            code, failed = self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})
+            self.assertEqual(code, 502)
+            self.assertEqual(record.capture, old_capture)
+            self.assertEqual(record.events, old_events)
+            retry_code, retried = self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})
+        self.assertEqual(retry_code, 200)
+        self.assertEqual(retried["captures"][0]["status"], "COMPLETED")
+        capture.assert_called_once()
+        self.assertEqual(get.call_count, 3)
+
+    def test_mismatched_pending_refresh_cannot_replace_cache_or_audit(self):
+        plan = self.plan()
+        self.bind(plan)
+        pending = self.provider_order(plan, "COMPLETED")
+        pending["purchase_units"][0]["payments"]["captures"][0]["status"] = "PENDING"
+        with patch.object(app, "get_order", return_value=self.provider_order(plan, "APPROVED")), patch.object(app, "capture_order", return_value=pending):
+            self.assertEqual(self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})[0], 200)
+        record = app.STORE.plans[plan["plan_id"]]
+        old_capture, old_events = copy.deepcopy(record.capture), copy.deepcopy(record.events)
+        mismatches = {}
+        for label in ("order_id", "plan_reference", "custom_id", "order_amount", "capture_amount", "capture_currency", "capture_id", "missing_captures"):
+            order = self.provider_order(plan, "COMPLETED")
+            unit = order["purchase_units"][0]
+            child = unit["payments"]["captures"][0]
+            if label == "order_id":
+                order["id"] = "OTHERORDER"
+            elif label == "plan_reference":
+                unit["reference_id"] = "OTHERPLAN"
+            elif label == "custom_id":
+                unit["custom_id"] = "OTHERPLAN"
+            elif label == "order_amount":
+                unit["amount"]["value"] = "25.00"
+            elif label == "capture_amount":
+                child["amount"]["value"] = "25.00"
+            elif label == "capture_currency":
+                child["amount"]["currency_code"] = "EUR"
+            elif label == "capture_id":
+                child["id"] = "OTHERCAPTURE"
+            else:
+                order["status"] = "APPROVED"
+                del unit["payments"]
+            mismatches[label] = order
+        for label, response in mismatches.items():
+            with self.subTest(label=label), patch.object(app, "get_order", return_value=response) as get, patch.object(app, "capture_order") as capture:
+                code, _ = self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})
+                self.assertEqual(code, 502)
+                self.assertEqual(record.capture, old_capture)
+                self.assertEqual(record.events, old_events)
+                get.assert_called_once_with("DEMOORDER1")
+                capture.assert_not_called()
+
+    def test_declined_capture_is_terminal_and_never_recaptured(self):
+        plan = self.plan()
+        self.bind(plan)
+        declined = self.provider_order(plan, "COMPLETED")
+        declined["purchase_units"][0]["payments"]["captures"][0]["status"] = "DECLINED"
+        with patch.object(app, "get_order", return_value=self.provider_order(plan, "APPROVED")) as get, patch.object(app, "capture_order", return_value=declined) as capture:
+            first_code, first = self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})
+            repeat_code, repeated = self.api("/api/paypal/capture", {"order_id": "DEMOORDER1"})
+        self.assertEqual((first_code, repeat_code), (200, 200))
+        self.assertEqual(repeated["captures"][0]["status"], "DECLINED")
+        self.assertEqual(first["events"], repeated["events"])
+        get.assert_called_once()
+        capture.assert_called_once()
+
     def test_completed_provider_order_recovers_lost_capture_response(self):
         plan = self.plan()
         self.bind(plan)

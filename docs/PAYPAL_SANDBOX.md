@@ -26,6 +26,8 @@ Never copy secrets into a video, screenshot, issue, chat, public repository, or 
 8. MendCart retrieves the order from PayPal, validates its stored plan reference and amount, and permits capture only when the provider reports `APPROVED`. A browser `payer_approved` flag has no authority. A previously `COMPLETED` order is recovered without issuing a second capture.
 9. The browser receives a minimal order/capture summary and chronological local events. Provider payer email/name fields and raw provider error bodies are excluded.
 
+If a child capture is `PENDING`, checking again retrieves the existing order with a provider GET. The server rechecks the order, plan reference, currency, total and original capture IDs before replacing the cached result. The retry does not issue another capture. An order-level `COMPLETED` status alone does not establish that its child capture has completed. Failed or inconsistent refreshes preserve the previous verified record. Known terminal capture outcomes remain cached in this bounded demo; this is not ongoing refund or dispute monitoring.
+
 ## HTTP contract
 
 Use the same browser cookie jar throughout. Foreign sessions cannot view, approve, or capture another session's plan/order. POST requests from a foreign origin or mismatched host are rejected.
@@ -41,14 +43,14 @@ Use the same browser cookie jar throughout. Foreign sessions cannot view, approv
 | `POST /api/plans/approve` | `plan_id`, `human_approved: true` | Recorded approval for that server plan |
 | `POST /api/paypal/orders` | `plan_id`; optionally `human_approved: true` to approve and create in one operation | `mode`, `status`, `plan_id`, `order_id`, `approval_url`, `amount`, `currency`, `events`; preview includes unsubmitted `order` |
 | `GET /api/paypal/orders/{order_id}` | session cookie | Fresh provider status after reference/amount verification, plus owned `plan` for return recovery |
-| `POST /api/paypal/capture` | `order_id` | Server-verified provider capture or prior completed result; minimal `capture` summary |
+| `POST /api/paypal/capture` | `order_id` | First server-verified capture, GET-only refresh of a nonterminal cached capture, or cached terminal result; minimal `capture` summary |
 
 Plan/order ownership, approval events, and captured results are **in memory**. Restarting the demo clears these records; the server then refuses unknown old order IDs rather than capturing arbitrary external orders. Sessions and plans have bounded demo capacity. There is no durable ledger, webhook reconciliation, stock reservation, merchant fulfillment, or live catalog feed. Provider idempotency has provider-specific retention limits; do not treat this local store as a permanent financial ledger.
 
 ## Automated evidence and remaining provider check
 
-`python -m unittest tests.test_checkout -v` runs a real ephemeral localhost HTTP server, with all PayPal responses mocked. It tests immutable server totals, policy failure, expiry, browser ownership, cross-origin rejection, forged payer flags, provider amount mismatches, idempotent create/capture, interrupted capture recovery, OAuth headers/cache, sanitized provider errors, exact sandbox origins, return URLs, and Orders v2 item-total consistency.
+`python -m unittest discover -s tests -p test_checkout.py -v` runs a real ephemeral localhost HTTP server, with all PayPal responses mocked. It tests immutable server totals, policy failure, expiry, browser ownership, cross-origin rejection, forged payer flags, provider amount mismatches, idempotent create/capture, interrupted capture recovery, pending-capture refresh without a second capture, OAuth headers/cache, sanitized provider errors, exact sandbox origins, return URLs, and Orders v2 item-total consistency.
 
 Before describing the integration as provider-verified, run the browser flow with genuine sandbox credentials and preserve: sandbox order ID/status, provider-approved status, completed sandbox capture ID/status, matching USD amount, and a redacted screenshot or short video. Do not publish the buyer's personal details or any credentials.
 
-Official references: [Orders v2](https://developer.paypal.com/api/orders/v2), [OAuth authentication](https://developer.paypal.com/api/rest/authentication/), and [PayPal request idempotency](https://developer.paypal.com/api/rest/reference/idempotency/).
+Official references: [Orders v2](https://developer.paypal.com/api/orders/v2), [show order details](https://developer.paypal.com/api/orders/v2/orders-get), [capture status schema](https://developer.paypal.com/api/payments/v2/schema.json), [OAuth authentication](https://developer.paypal.com/api/rest/authentication/), and [PayPal request idempotency](https://developer.paypal.com/api/rest/reference/idempotency/).

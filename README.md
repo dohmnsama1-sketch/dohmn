@@ -41,6 +41,8 @@ PayPal **Orders v2 in sandbox** provides the commerce flow:
 4. On return, MendCart verifies provider state and captures only an approved order bound to that session and plan.
 5. The interface displays sandbox status and the recorded event sequence.
 
+When a returned capture is pending, checking its status retrieves the same provider order and validates its original capture IDs and amount. It does not issue a second capture. Completed or other known terminal capture results stay cached in this in-memory demo.
+
 Set `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` in `.env` from a **sandbox** developer app. Keep `PAYPAL_BASE_URL=https://api-m.sandbox.paypal.com`. `MENDCART_PUBLIC_URL` controls the return origin; its default is `http://127.0.0.1:8000`. Public return origins require HTTPS. See [docs/PAYPAL_SANDBOX.md](docs/PAYPAL_SANDBOX.md).
 
 The code contains a sandbox integration; successful provider execution must be established separately. A preview, unit test or mocked response is not evidence of a completed PayPal sandbox transaction.
@@ -74,7 +76,7 @@ The [reproducible intent evaluation](docs/EVALUATION.md) exports the existing 16
 - [Submission draft and form fields](docs/SUBMISSION.md)
 - [Demo recording script](docs/DEMO_SCRIPT.md)
 
-The complete source is public at [dohmnsama1-sketch/dohmn](https://github.com/dohmnsama1-sketch/dohmn), under Apache-2.0. [GitHub CI passed on Python 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389). Watch the [public engineering preview on YouTube](https://youtu.be/kqcYwCBVv50), approximately 2:15, showing actual application screens with disclosed synthetic narration. It explicitly states that provider execution has not happened. Actual sandbox execution and a final video demonstrating the completed integration remain pending. Pending stages are tracked in the competition document.
+The complete source is public at [dohmnsama1-sketch/dohmn](https://github.com/dohmnsama1-sketch/dohmn), under Apache-2.0. [GitHub CI](https://github.com/dohmnsama1-sketch/dohmn/actions/workflows/tests.yml) runs the suite and offline intent evaluation on Python 3.11 and 3.12; match a run's commit to the version being reviewed. Watch the [public engineering preview on YouTube](https://youtu.be/kqcYwCBVv50), approximately 2:15, showing actual application screens with disclosed synthetic narration. It explicitly states that provider execution has not happened. Actual sandbox execution and a final video demonstrating the completed integration remain pending. Pending stages are tracked in the competition document.
 
 ## License
 

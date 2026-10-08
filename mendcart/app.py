@@ -100,6 +100,25 @@ def _verify_capture(record: PlanRecord, captured: dict) -> None:
         raise PayPalError("Sandbox capture amount does not match the approved server plan.")
 
 
+def _refresh_nonterminal_capture(record: PlanRecord) -> None:
+    """Refresh a recorded capture by GET only; never submit capture again."""
+    previous = record.capture["purchase_units"][0]["payments"]["captures"]
+    terminal = {"COMPLETED", "DECLINED", "FAILED", "REFUNDED", "PARTIALLY_REFUNDED"}
+    if previous and all(capture.get("status") in terminal for capture in previous):
+        return
+    latest = get_order(record.order["id"])
+    _verify_order(record, latest)
+    _verify_capture(record, latest)
+    refreshed = latest["purchase_units"][0]["payments"]["captures"]
+    if {capture["id"] for capture in refreshed} != {capture["id"] for capture in previous}:
+        raise PayPalError("Sandbox refresh does not match the recorded capture IDs.")
+    approval_url(latest)
+    # Preserve the previous cache and audit if any provider check fails.
+    record.capture = latest
+    record.event("sandbox_capture_refreshed", order_id=latest["id"], status=latest.get("status"),
+                 captures=[{"id": capture["id"], "status": capture.get("status")} for capture in refreshed])
+
+
 def _public_order(record: PlanRecord, order: dict) -> dict:
     captures = [
         {"id": capture.get("id"), "status": capture.get("status"), "amount": capture.get("amount")}
@@ -265,6 +284,7 @@ class Handler(BaseHTTPRequestHandler):
                 record = STORE.order(owner, order_id)
                 with record.lock:
                     if record.capture:
+                        _refresh_nonterminal_capture(record)
                         result = _public_order(record, record.capture)
                         return self._send({**result, "capture": {"id": result["order_id"], "status": result["status"], "captures": result["captures"]}})
                     provider_order = get_order(order_id)

@@ -111,9 +111,15 @@ function renderOrder(order) {
         const captures = result.captures || (provider.purchase_units || []).flatMap(x => x.payments?.captures || []);
         const paid = captures.length > 0 && captures.every(x => x.status === 'COMPLETED');
         $('#receipt').textContent = `Sandbox order: ${provider.id || order.order_id} · ${finalStatus}. Capture records: ${captures.map(x => `${x.id}: ${x.status}`).join(', ') || 'none'}. This is test money; it is not project revenue.`;
+        const terminal = new Set(['COMPLETED', 'DECLINED', 'FAILED', 'REFUNDED', 'PARTIALLY_REFUNDED']);
         if (paid) button.textContent = 'Sandbox capture completed';
-        else if (finalStatus === 'COMPLETED') {button.textContent = 'Capture pending — check provider status'; button.disabled = false;}
-        else button.disabled = false;
+        else if (captures.some(x => x.status === 'PENDING')) {
+          button.textContent = 'Capture pending — check provider status'; button.disabled = false;
+        } else if (captures.length && captures.every(x => terminal.has(x.status))) {
+          button.textContent = 'Sandbox capture: ' + [...new Set(captures.map(x => x.status))].join(', ');
+        } else {
+          button.textContent = 'Check provider capture status'; button.disabled = false;
+        }
       } catch (e) {toast(e.message); button.disabled = false;}
     };
   } else {

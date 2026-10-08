@@ -1,4 +1,12 @@
-# Verification — 4 October 2026
+# Verification
+
+## Pending capture refresh — 7 October 2026
+
+The full local suite passed **66 tests** on Python 3.12 after the pending-capture fix. Four new HTTP tests cover a pending result remaining pending and then becoming completed, foreign-session rejection before provider access, failed-refresh recovery, eight mismatched response variants, and terminal declined-result idempotency. They verify that retries issue provider GETs, preserve the original capture ID and amount, and never submit a second capture. Failed validation leaves the previous cache and audit untouched.
+
+All provider responses in this check were mocked. No actual PayPal order, approval or capture occurred. JavaScript syntax and the Git whitespace check passed. The interface now distinguishes actual pending captures from known terminal non-success outcomes. Terminal caches do not monitor later refund or dispute changes; state is still in memory.
+
+## Original working application — 4 October 2026
 
 The combined suite passed **62 tests** on Python 3.12. This includes local HTTP behavior, learned intent inference, cart constraints, explicit negation and replacement requests, session ownership, read-only preview, provider approval checks, amount matching and idempotent retries. JavaScript syntax was checked separately.
 
@@ -12,7 +20,7 @@ The working browser application was exercised for:
 - Read-only checkout preview: exact canonical payload shown, with no approval recorded or PayPal request made.
 - Model trace: disclosed training examples and similarity evidence shown.
 
-The 16 held-out synthetic intent phrases passed 16/16. This is a small regression set, not a production accuracy or customer benchmark.
+The 16 project-authored synthetic intent phrases passed 16/16. This is a small regression set used during development, not an independent, production accuracy or customer benchmark. The [reproducible report](EVALUATION.md) was added on 5 October; the classifier and corpus were not changed by the capture fix.
 
 The [public source repository](https://github.com/dohmnsama1-sketch/dohmn) contains all source, the corpus, tests, setup documentation and Apache-2.0 license. [CI completed successfully on Python 3.11 and 3.12](https://github.com/dohmnsama1-sketch/dohmn/actions/runs/37194002389).
 
