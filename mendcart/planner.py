@@ -62,6 +62,11 @@ _NUMBER_WORDS = {word: i for i, word in enumerate("zero one two three four five 
 _NUMBER_WORDS.update({"thirty": 30, "forty": 40, "fifty": 50, "sixty": 60, "seventy": 70, "eighty": 80, "ninety": 90, "hundred": 100, "thousand": 1000, "million": 1000000})
 _NUMBER_PATTERN = r"(?:\d+|" + "|".join(_NUMBER_WORDS) + r")"
 _MODEL_VERSION = "local-tfidf-knn-v1"
+_NEGATED_TARGET = (
+    r"(?:(?:no|not|avoid|exclude|skip|without)\s+"
+    r"|(?:do\s+not|don't|never)\s+(?:buy|use|choose|want|need)\s+)"
+    r"(?:(?:a|an|the|any|all)\s+)?"
+)
 
 
 def _features(text: str) -> Counter:
@@ -183,15 +188,24 @@ def _requirements(req: PlanRequest) -> tuple[list[dict], set[str], list[dict]]:
     clauses = [part.strip() for part in re.split(r"[;,]|\b(?:and|but|then)\b|(?<!\d)[.!?](?!\d)", req.request, flags=re.I) if part.strip()]
     for clause in clauses:
         clause = clause.lower()
-        negative = r"(?:(?:no|not|avoid|without)\s+|(?:do\s+not|don't|never)\s+(?:buy|use|choose|want)\s+(?:any\s+)?)"
-        negative_new = bool(re.search(negative + r"new\s+(?:cells|batteries|packs)", clause))
-        negative_reclaimed = bool(re.search(negative + r"(?:reclaimed|used)", clause))
+        negative_new = bool(re.search(r"\b" + _NEGATED_TARGET + r"new\s+(?:cells?|batter(?:y|ies)|packs?)\b", clause))
+        negative_reclaimed = bool(re.search(r"\b" + _NEGATED_TARGET + r"(?:reclaimed|used)\b", clause))
         positive_new = bool(re.search(r"(?:only\s+(?:brand\s+)?new|brand\s+new|new\s+(?:(?:protected|18650|battery|four-cell)\s+){0,3}(?:cells|batteries|packs))", clause))
         positive_reclaimed = bool(re.search(r"(?:only\s+(?:tested\s+)?(?:reclaimed|used)|(?:reclaimed|used)\s+(?:18650\s+)?(?:cells|batteries|packs))", clause))
         if negative_reclaimed or (positive_new and not negative_new):
             excluded.add("BAT-RECLAIM-4")
         if negative_new or (positive_reclaimed and not negative_reclaimed):
             excluded.add("BAT-18650-4")
+        # A skipped negative clause still constrains a later positive request.
+        # Bare categories exclude every alternative; condition/component phrases do not.
+        prefix = r"^\s*(?:(?:i|we|please)\s+)?" + _NEGATED_TARGET
+        for target, skus in [
+            (r"(?:batter(?:y|ies)|cells?)\b", ["BAT-RECLAIM-4", "BAT-18650-4"]),
+            (r"tools?\b", ["TOOL-MULTI"]),
+            (r"(?:water\s+)?pumps?\b\s*(?:please)?$", ["PUMP-SEAL-KIT", "PUMP-REPLACE"]),
+        ]:
+            if re.search(prefix + target, clause):
+                excluded.update(skus)
     if re.search(r"(?:no\s+(?:full\s+)?replacement|(?:do\s+not|don't|never)\s+(?:buy\s+(?:a\s+)?)?replace|without\s+(?:a\s+)?replacement)", text):
         excluded.add("PUMP-REPLACE")
     if re.search(r"(?:beyond\s+repair|cannot\s+(?:be\s+)?repair|can't\s+(?:be\s+)?repair|must\s+replace|only\s+(?:a\s+)?replacement|no\s+(?:seal\s+)?repair\s+kit|(?:do\s+not|don't|never)\s+(?:buy|use|choose|want)\s+(?:(?:a|the|any)\s+)?(?:seal\s+)?repair\s+kit)", text):
@@ -204,8 +218,8 @@ def _requirements(req: PlanRequest) -> tuple[list[dict], set[str], list[dict]]:
         if explicitly_replace and not negated_replace:
             excluded.add("PUMP-SEAL-KIT")
     for pattern, skus in [
-        (r"(?:no\s+(?:battery|batteries|cells)|(?:do\s+not|don't)\s+(?:buy|need|want)\s+(?:any\s+)?(?:battery|batteries|cells))", ["BAT-RECLAIM-4", "BAT-18650-4"]),
-        (r"(?:(?:no|not)\s+tools|without\s+tools|(?:do\s+not|don't)\s+(?:buy|need|want)\s+(?:any\s+)?tools)", ["TOOL-MULTI"]),
+        (r"\b(?:no\s+(?:batter(?:y|ies)|cells?)|(?:do\s+not|don't)\s+(?:buy|need|want)\s+(?:any\s+)?(?:batter(?:y|ies)|cells?))\b", ["BAT-RECLAIM-4", "BAT-18650-4"]),
+        (r"\b(?:(?:no|not)\s+tools?|without\s+tools?|(?:do\s+not|don't)\s+(?:buy|need|want)\s+(?:any\s+)?tools?)\b", ["TOOL-MULTI"]),
     ]:
         if re.search(pattern, text):
             excluded.update(skus)

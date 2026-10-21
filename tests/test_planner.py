@@ -115,6 +115,64 @@ class ConstraintPlannerTests(unittest.TestCase):
         self.assertTrue(plan["policy_passed"])
         self.assertEqual(self.skus(plan), ["PUMP-SEAL-KIT"])
 
+    def test_whole_category_exclusions_block_conflicting_requests(self):
+        for exclusion, purchase in [
+            ("Avoid batteries", "buy eight cells"),
+            ("Exclude battery", "buy eight cells"),
+            ("Skip cells", "buy eight cells"),
+            ("Never use a cell", "buy eight cells"),
+            ("Exclude tools", "buy insulated appliance tools"),
+            ("Avoid a tool", "buy insulated appliance tools"),
+            ("Skip tools", "buy insulated appliance tools"),
+            ("Never buy tools", "buy insulated appliance tools"),
+            ("Do not choose tools", "buy insulated appliance tools"),
+        ]:
+            for text in (f"{exclusion}, {purchase}", f"{purchase}, {exclusion}"):
+                with self.subTest(text=text):
+                    plan = self.plan(text)
+                    self.assertFalse(plan["policy_passed"])
+                    self.assertEqual(plan["items"], [])
+
+        plan = self.plan("Repair our leaking water pump, avoid batteries, buy eight cells")
+        self.assertFalse(plan["policy_passed"])
+        self.assertEqual(plan["items"], [])
+
+    def test_whole_category_exclusions_keep_unrelated_request(self):
+        for exclusion in ("avoid batteries", "exclude a cell", "skip tools", "never buy a tool"):
+            for text in (f"{exclusion}, repair our leaking water pump", f"Repair our leaking water pump, {exclusion}"):
+                with self.subTest(text=text):
+                    plan = self.plan(text)
+                    self.assertTrue(plan["policy_passed"])
+                    self.assertEqual(self.skus(plan), ["PUMP-SEAL-KIT"])
+
+    def test_negated_battery_conditions_allow_other_condition(self):
+        for verb in ("avoid", "exclude", "skip", "never use", "no"):
+            for condition, expected in (("new", "BAT-RECLAIM-4"), ("reclaimed", "BAT-18650-4")):
+                for noun in ("cell", "cells", "battery", "batteries"):
+                    text = f"Buy eight cells, {verb} {condition} {noun}"
+                    with self.subTest(text=text):
+                        plan = self.plan(text)
+                        self.assertTrue(plan["policy_passed"])
+                        self.assertEqual(self.skus(plan), [expected])
+
+    def test_category_exclusion_nouns_respect_word_boundaries(self):
+        for text, expected in [
+            ("Avoid cellular equipment, buy eight cells", "BAT-RECLAIM-4"),
+            ("No toolsmith services, buy insulated appliance tools", "TOOL-MULTI"),
+        ]:
+            with self.subTest(text=text):
+                plan = self.plan(text)
+                self.assertTrue(plan["policy_passed"])
+                self.assertEqual(self.skus(plan), [expected])
+
+    def test_whole_pump_exclusions_block_conflicting_requests(self):
+        for exclusion in ("avoid pumps", "exclude a pump", "skip water pumps", "never buy a water pump"):
+            for text in (f"{exclusion}, repair our leaking water pump", f"Repair our leaking water pump, {exclusion}"):
+                with self.subTest(text=text):
+                    plan = self.plan(text)
+                    self.assertFalse(plan["policy_passed"])
+                    self.assertEqual(plan["items"], [])
+
     def test_replacement_selected_only_when_requested(self):
         plan = self.plan("The water pump cannot be repaired; must replace the assembly")
         self.assertEqual(self.skus(plan), ["PUMP-REPLACE"])
@@ -221,6 +279,20 @@ class ConstraintPlannerTests(unittest.TestCase):
             plan = self.plan("Need eight new 18650 cells")
         self.assertFalse(plan["policy_passed"])
         self.assertTrue(any("request-excluded" in finding for finding in plan["policy_findings"]))
+
+    def test_structured_adapter_cannot_override_category_exclusion(self):
+        for text, sku, quantity in [
+            ("Avoid batteries, buy eight cells", "BAT-RECLAIM-4", 2),
+            ("Buy eight cells, skip batteries", "BAT-18650-4", 2),
+            ("Exclude tools, buy insulated appliance tools", "TOOL-MULTI", 1),
+            ("Repair our leaking water pump, avoid pumps", "PUMP-SEAL-KIT", 1),
+        ]:
+            body = {"choices": [{"message": {"content": json.dumps({"summary":"x", "reasoning":"x", "items":[{"sku":sku, "quantity":quantity}]})}}]}
+            with self.subTest(text=text), patch.dict(os.environ, {"OPENAI_BASE_URL":"https://model.example/v1", "OPENAI_API_KEY":"test-only", "OPENAI_MODEL":"test-model"}), patch("mendcart.planner.urlopen", return_value=io.BytesIO(json.dumps(body).encode())):
+                plan = self.plan(text)
+            self.assertFalse(plan["policy_passed"])
+            self.assertEqual(plan["items"], [])
+            self.assertTrue(any("request-excluded" in finding for finding in plan["policy_findings"]))
 
     def test_inventory_fallback_is_considered(self):
         altered = [{**row, "stock": 0} if row["sku"] == "BAT-RECLAIM-4" else dict(row) for row in CATALOG]
