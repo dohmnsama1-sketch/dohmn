@@ -42,7 +42,7 @@ Without actual capture evidence, keep this stage pending rather than claiming de
 
 ## Required form mapping
 
-Form read on 5 October 2026. Fetch current requirements again before writing.
+Mapping refreshed from the live Devpost API schema on 22 October 2026. Fetch current requirements again before writing. The custom demo/test-build URL field `28787` is now `required=true`, while the global website requirement remains false and the public prose allows repository/run instructions. Preserve that distinction: supply the verified public planning preview in the custom field, but do not treat the URL or schema requirement as proof of a completed PayPal flow.
 
 | ID | Field | Prepared answer or required fact |
 |---|---|---|
@@ -55,7 +55,7 @@ Form read on 5 October 2026. Fetch current requirements again before writing.
 | 28784 | PayPal + AI use | Verified technology description |
 | 28786 | Sponsors | Only actually used tools; current local stack: `None, used other AI tools.` |
 | 28788 | GitHub | https://github.com/dohmnsama1-sketch/dohmn — complete public source and Apache-2.0 license |
-| 28787 | Demo URL | Optional tested hosted URL |
+| 28787 | Demo/test-build URL — required custom field | https://mendcart-paypal-ai.vercel.app/ — verified public synthetic planning preview only. Actual PayPal provider checkout has not been demonstrated at this public host; use the repository/local sandbox instructions for the separate integration setup. |
 | 28798 | Testing | README, reproducible synthetic intent report and sandbox guide; no secrets; actual provider execution remains pending |
 | 28790 | PayPal rating | Accurate 1–10 assessment after integration |
 | 28791 | Feedback | Observations from actual development/testing |
@@ -63,6 +63,9 @@ Form read on 5 October 2026. Fetch current requirements again before writing.
 | 28794 | Age | Entrant/team of legal majority where resident |
 | 28795 | Jurisdiction | Accurate eligible jurisdiction attestation |
 | 28796 | Employment | Accurate sponsor/administrator affiliation attestation |
+| 29053 | AI tools — required text | MendCart uses its local supervised TF-IDF nearest-neighbor intent classifier (`local-tfidf-knn-v1`), trained from the original synthetic corpus in `data/intent_corpus.json`. Codex assisted software development. The optional OpenAI-compatible adapter is included, but actual use of an external model service has not been established. |
+| 29054 | Learning — required choice | Participant's truthful choice remains pending: `None` / `Moderate` / `Significant`. Do not infer a learning outcome. |
+| 29055 | Career value of AI — required choice | Participant's truthful choice remains pending: `Yes` / `No`. Do not infer a personal assessment. |
 
 The global project form also requires the write-up and **public YouTube URL**. The current [engineering preview](https://youtu.be/kqcYwCBVv50) is public and under three minutes, but does not demonstrate an executed sandbox integration. Replace it with the final integration recording before claiming that the complete sandbox flow is demonstrated. Optional sponsor feedback should be answered only for used tools.
 
